@@ -14,6 +14,8 @@ CPU/RAM, MCP, skills, plugins, models. Live, local, private.
 [![React](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev)
 [![Rust](https://img.shields.io/badge/Rust-stable-orange.svg)](https://www.rust-lang.org)
 ![No telemetry](https://img.shields.io/badge/telemetry-none-lightgrey.svg)
+![Installer](https://img.shields.io/badge/installer-~3_MB-blue.svg)
+![Idle RAM](https://img.shields.io/badge/idle_RAM-~30_MB-blue.svg)
 
 ![AgentHQ dashboard](assets/screenshot-dashboard.png)
 
@@ -44,6 +46,21 @@ _No cloud. No accounts. No telemetry. Everything below stays on your machine._
 If you run more than one AI coding agent, you already know the mess: each CLI keeps its own sessions, skills, plugins and projects in its own hidden folders, and none of them tells you what it's doing right now. AgentHQ is the missing mission control — it reads those local folders directly and answers, at a glance:
 
 > _Which agents do I have? Which are running? What are they working on, and how much machine are they eating?_
+
+---
+
+## 🪶 Lightweight, on purpose
+
+No Electron, no background server, no bundled browser — Tauri renders with the system's WebView2, the backend is a single native binary, and the whole installer is **~3 MB**. Measured on the release build (Windows 11, 12-core, app idle):
+
+| Metric | Measured | Budget |
+|---|---|---|
+| Installer (setup.exe) | ~2.3 MB | — |
+| Startup (process start → visible window) | 802 ms | < 2 s |
+| Idle CPU (10 s sample) | 0% | < 1–2% |
+| Idle RAM (working set / private) | 31 / 10 MB | < 150 MB |
+
+How it stays light: one aggregated IPC call per dashboard load (never one call per card), monitoring ticks only while the Monitoring page is open, paused monitoring skips all sysinfo refreshes, command lines capped at 512 chars, transcripts scanned with line caps, no file watching beyond three known config dirs, no rayon/thread pools. Method + raw numbers: [`docs/performance.md`](docs/performance.md).
 
 ---
 
