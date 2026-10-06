@@ -80,6 +80,19 @@ struct CachedMeta {
 pub struct ProcessMonitor {
     system: System,
     meta: HashMap<u32, CachedMeta>,
+    last_full_refresh: Option<std::time::Instant>,
+}
+
+/// Minimum gap between full process rescans (matches DEFAULT_TICK_SECS).
+pub const REFRESH_TTL_SECS: u64 = 2;
+
+/// Gate for one more full rescan: first call always refreshes, then at
+/// most once per TTL. Queued event-loads must not each pay a full scan.
+pub fn should_refresh(last: Option<std::time::Instant>, now: std::time::Instant) -> bool {
+    match last {
+        None => true,
+        Some(t) => now.duration_since(t).as_secs() >= REFRESH_TTL_SECS,
+    }
 }
 
 impl ProcessMonitor {
@@ -87,6 +100,7 @@ impl ProcessMonitor {
         ProcessMonitor {
             system: System::new(),
             meta: HashMap::new(),
+            last_full_refresh: None,
         }
     }
 
@@ -140,6 +154,19 @@ impl ProcessMonitor {
         (self.system.used_memory(), self.system.total_memory())
     }
 
+    /// Snapshot-rate refresh for polled/event-driven loads: a full
+    /// rescan at most once per TTL; cheap cpu/mem totals every call.
+    /// Explicit actions (Refresh button, detail snapshot) use refresh().
+    pub fn refresh_rate_limited(&mut self) {
+        let now = std::time::Instant::now();
+        if should_refresh(self.last_full_refresh, now) {
+            self.refresh();
+            self.last_full_refresh = Some(now);
+        } else {
+            self.refresh_system();
+        }
+    }
+
     pub fn snapshot(&self) -> Vec<ProcessInfo> {
         self.system
             .processes()
@@ -174,8 +201,9 @@ impl ProcessMonitor {
 
 #[cfg(test)]
 mod tests {
-    use super::{children_of, parent_map, ProcessInfo};
+    use super::{children_of, parent_map, should_refresh, ProcessInfo, REFRESH_TTL_SECS};
     use std::collections::HashMap;
+    use std::time::{Duration, Instant};
 
     fn row(pid: u32, parent: Option<u32>) -> ProcessInfo {
         ProcessInfo {
@@ -209,6 +237,24 @@ mod tests {
     fn test_children_of_unknown_pid_is_empty() {
         let map: HashMap<u32, u32> = HashMap::new();
         assert!(children_of(99999, &map).is_empty());
+    }
+
+    #[test]
+    fn test_first_scan_always_refreshes() {
+        assert!(should_refresh(None, Instant::now()));
+    }
+
+    #[test]
+    fn test_rescan_throttled_within_ttl() {
+        let first = Instant::now();
+        assert!(!should_refresh(
+            Some(first),
+            first + Duration::from_secs(REFRESH_TTL_SECS - 1)
+        ));
+        assert!(should_refresh(
+            Some(first),
+            first + Duration::from_secs(REFRESH_TTL_SECS)
+        ));
     }
 
     #[test]

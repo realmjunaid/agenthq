@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getDashboard, getEvents, refreshAll } from "../lib/api";
+import { createCoalescer } from "../lib/coalesce";
 import { errMessage } from "../lib/format";
 import type { DashboardData } from "../types/dashboard";
 import type { BusEvent } from "../types/events";
@@ -42,7 +43,10 @@ export function useDashboard() {
     void load();
   }, [load]);
 
-  useAgentEvents(load);
+  // Event storms (one live event per changed item during refresh)
+  // collapse into a single trailing load.
+  const coalescedLoad = useMemo(() => createCoalescer(1000, () => void load()), [load]);
+  useAgentEvents(coalescedLoad);
 
   const refresh = useCallback(async () => {
     setRefreshing(true);

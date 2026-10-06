@@ -44,7 +44,7 @@ pub fn build_dashboard(
     let (snapshot, system) = {
         let mut m = monitor.lock().map_err(|e| e.to_string())?;
         if !crate::tray::PAUSED.load(std::sync::atomic::Ordering::SeqCst) {
-            m.refresh();
+            m.refresh_rate_limited();
         }
         let (used_mem_bytes, total_mem_bytes) = m.memory_usage();
         let system = SystemStats {
