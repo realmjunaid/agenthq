@@ -173,7 +173,7 @@
 ## Decisions
 
 - Scaffold in subfolder `agenthq/`, product name `AgentHQ`.
-- npm (no pnpm on machine). Git init deferred by user.
+- npm (no pnpm on machine). Git live at https://github.com/realmjunaid/agenthq (main, public, MIT).
 - Native (inline) execution, quality-first; final review before done.
 
 ## Skills & Plugins (global, all harnesses)
