@@ -1,0 +1,2 @@
+ALTER TABLE mcp_servers ADD COLUMN args TEXT;
+ALTER TABLE mcp_servers ADD COLUMN env_count INTEGER NOT NULL DEFAULT 0;

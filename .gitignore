@@ -1,0 +1,29 @@
+# Rust / Tauri
+agenthq/src-tauri/target/
+**/*.rs.bk
+
+# Frontend
+agenthq/node_modules/
+agenthq/dist/
+agenthq/dist-ssr/
+*.local
+
+# SQLite (local app data, never commit)
+/agenthq/*.db
+/agenthq/*.db-*
+**/agenthq.db
+**/agenthq.db-*
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Local scratch (agent working notes, not part of the product)
+.superpowers/

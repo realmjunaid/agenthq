@@ -1,0 +1,18 @@
+[
+  {
+    "id": "ses_demo0001",
+    "title": "Demo session",
+    "updated": 1791202563262,
+    "created": 1791193048300,
+    "projectId": "abc123",
+    "directory": "E:/demo"
+  },
+  {
+    "id": "ses_demo0002",
+    "title": "Second",
+    "updated": 1791202600000,
+    "created": 1791202500000,
+    "projectId": "abc123",
+    "directory": "E:/demo"
+  }
+]

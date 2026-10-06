@@ -1,0 +1,7 @@
+{
+  "model": "auto",
+  "env": {
+    "FAKE_PROVIDER_KEY": "FAKE-SECRET-xyz"
+  },
+  "hooks": {}
+}

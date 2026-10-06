@@ -1,0 +1,19 @@
+{
+  "projects": {
+    "E:/demo": {
+      "mcpServers": {
+        "gh": {
+          "command": "gh-mcp",
+          "env": {
+            "GH_TOKEN": "SECRET2"
+          }
+        },
+        "local-docs": {
+          "command": "docs-mcp"
+        }
+      },
+      "enabledMcpjsonServers": ["gh"],
+      "disabledMcpjsonServers": ["local-docs"]
+    }
+  }
+}

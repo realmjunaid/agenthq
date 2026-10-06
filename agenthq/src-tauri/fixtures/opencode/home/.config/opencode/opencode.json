@@ -1,0 +1,11 @@
+{
+  "plugins": ["demo-plugin"],
+  "mcp": {
+    "gh": {
+      "command": "gh-mcp",
+      "env": {
+        "GH_TOKEN": "SECRET3"
+      }
+    }
+  }
+}

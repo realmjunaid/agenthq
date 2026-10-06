@@ -1,0 +1,11 @@
+[cli]
+installer = "internal"
+
+[marketplace]
+official_marketplace_auto_installed = true
+
+[ui]
+compact_mode = false
+
+[privacy]
+privacy_banner_acked = "2026-10-05T10:43:27Z"
